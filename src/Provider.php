@@ -84,7 +84,7 @@ class Provider extends ServiceProvider
 
         //dd('test');
 
-        
+
         $this->registerViewComposerData();
         $this->registerPassportResources();
     }
