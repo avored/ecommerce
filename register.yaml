@@ -1,0 +1,4 @@
+name: mage2-ecommerce
+namespace: Mage2\Ecommerce\
+source: src
+module: Mage2\Ecommerce\Provider

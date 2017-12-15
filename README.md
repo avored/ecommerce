@@ -1,2 +1,2 @@
-# ecommerce
-Mage2 E commerce App
+# Mage2 E commerce
+Mage2 E commerces
