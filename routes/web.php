@@ -240,9 +240,9 @@ Route::middleware(['web', 'admin.auth'])
         Route::post('configuration', ['as' => 'admin.configuration.store', 'uses' => 'ConfigurationController@store']);
 
 
-        //Route::get('themes', ['as' => 'admin.theme.index', 'uses' => 'ThemeController@index']);
+        Route::get('themes', ['as' => 'admin.theme.index', 'uses' => 'ThemeController@index']);
 
-        //Route::get('themes/create', ['as' => 'admin.theme.create', 'uses' => 'ThemeController@create']);
+        Route::get('themes/create', ['as' => 'admin.theme.create', 'uses' => 'ThemeController@create']);
         //Route::post('themes', ['as' => 'admin.theme.store', 'uses' => 'ThemeController@store']);
 
         //Route::post('active-themes/{name}', ['as' => 'admin.theme.activated', 'uses' => 'ThemeController@activated']);

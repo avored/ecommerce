@@ -42,7 +42,7 @@ class ThemeController extends AdminController
         $themes = Theme::all();
         $activeTheme = Configuration::getConfiguration('active_theme_identifier');
 
-        return view('mage2-dashboard::theme.index')
+        return view('mage2-ecommerce::admin.theme.index')
             ->with('themes', $themes)
             ->with('activeTheme', $activeTheme);
     }

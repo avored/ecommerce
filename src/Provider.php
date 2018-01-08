@@ -80,11 +80,6 @@ class Provider extends ServiceProvider
     {
         $this->registerMiddleware();
         $this->registerResources();
-
-
-        //dd('test');
-
-
         $this->registerViewComposerData();
         $this->registerPassportResources();
     }
