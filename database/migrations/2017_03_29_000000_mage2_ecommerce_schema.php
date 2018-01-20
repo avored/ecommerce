@@ -433,7 +433,40 @@ class Mage2EcommerceSchema extends Migration
 
 
 
+        Schema::create('product_property_varchar_values', function (Blueprint $table) {
 
+            $table->increments('id');
+            $table->integer('property_id')->unsigned();
+            $table->integer('product_id')->unsigned();
+            $table->string('value');
+            $table->timestamps();
+
+            $table->foreign('property_id')
+                ->references('id')->on('properties')->onDelete('cascade');
+            $table->foreign('product_id')
+                ->references('id')->on('products')->onDelete('cascade');
+        });
+
+
+
+
+
+
+
+        Schema::create('attributes', function (Blueprint $table) {
+
+            $table->increments('id');
+            $table->string('name');
+            $table->string('identifier')->unique();
+            $table->enum('field_type', ['TEXT', 'TEXTAREA', 'CKEDITOR', 'SELECT', 'FILE', 'DATETIME','CHECKBOX','RADIO','SWITCH']);
+            $table->integer('sort_order')->nullable()->default(0);
+            $table->timestamps();
+        });
+
+
+
+
+        /*
 
 
 
@@ -443,7 +476,7 @@ class Mage2EcommerceSchema extends Migration
             $table->enum('type',['PRODUCT','CATEGORY','ORDER','CUSTOMER'])->default('PRODUCT');
             $table->string('name');
             $table->string('identifier')->unique();
-            $table->enum('use_as',['SPECIFICATION','VARIATION'])->nullable()->default(null);
+            //$table->enum('use_as',['SPECIFICATION','VARIATION'])->nullable()->default(null);
             $table->enum('field_type', ['TEXT', 'TEXTAREA', 'CKEDITOR', 'SELECT', 'FILE', 'DATETIME','CHECKBOX','RADIO','SWITCH']);
             $table->integer('sort_order')->nullable()->default(0);
             $table->timestamps();
@@ -564,11 +597,7 @@ class Mage2EcommerceSchema extends Migration
                 ->references('id')->on('products')->onDelete('cascade');
         });
 
-
-
-
-
-
+        */
 
 
         Configuration::create(['configuration_key' => 'general_site_title', 'configuration_value' => 'Mage2 Laravel Ecommerce']);

@@ -24,9 +24,20 @@
  */
 namespace Mage2\Ecommerce\Models\Database;
 
-class Attribute extends BaseModel
+class ProductPropertyVarcharValue extends BaseModel
 {
-    protected $fillable = ['name', 'identifier', 'field_type' ,'sort_order'];
+
+    protected $fillable = ['property_id', 'product_id' ,'value'];
+
+
+    public function product() {
+        return $this->belongsTo(Product::class);
+    }
+
+    public function property() {
+        return $this->belongsTo(Property::class);
+    }
+
 }
 
 
