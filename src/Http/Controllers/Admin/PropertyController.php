@@ -1,27 +1,4 @@
 <?php
-/**
- * Mage2
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the GNU General Public License v3.0
- * that is bundled with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * https://www.gnu.org/licenses/gpl-3.0.en.html
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to ind.purvesh@gmail.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade Mage2 to newer
- * versions in the future. If you wish to customize Mage2 for your
- * needs please refer to http://mage2.website for more information.
- *
- * @author    Purvesh <ind.purvesh@gmail.com>
- * @copyright 2016-2017 Mage2
- * @license   https://www.gnu.org/licenses/gpl-3.0.en.html GNU General Public License v3.0
- */
 namespace Mage2\Ecommerce\Http\Controllers\Admin;
 
 use Illuminate\Http\JsonResponse;
@@ -29,6 +6,7 @@ use Illuminate\Http\Request;
 use Mage2\Ecommerce\DataGrid\Facade as DataGrid;
 use Mage2\Ecommerce\Models\Database\Property;
 use Mage2\Ecommerce\Http\Requests\PropertyRequest;
+use Mage2\Ecommerce\Models\Database\PropertyDropdownOption;
 
 class PropertyController extends AdminController
 {
@@ -81,8 +59,9 @@ class PropertyController extends AdminController
      */
     public function store(PropertyRequest $request)
     {
-        Property::create($request->all());
+        $property = Property::create($request->all());
 
+        $this->_saveDropdownOptions($property,$request);
         return redirect()->route('admin.property.index');
     }
 
@@ -112,6 +91,8 @@ class PropertyController extends AdminController
     {
         $property = Property::findorfail($id);
         $property->update($request->all());
+
+        $this->_saveDropdownOptions($property,$request);
 
         return redirect()->route('admin.property.index');
     }
@@ -143,6 +124,8 @@ class PropertyController extends AdminController
     {
         $properties = Property::whereIn('id',$request->get('property_id'))->get();
 
+
+
         $tmpString = str_random();
         $view = view('mage2-ecommerce::admin.property.get-element')
                         ->with('properties', $properties)
@@ -151,4 +134,24 @@ class PropertyController extends AdminController
 
         return new JsonResponse(['success' => true,'content' => $view->render()]);
     }
+
+    private function _saveDropdownOptions($property, $request)
+    {
+
+        if (null !== $request->get('dropdown-options')) {
+
+            $property->propertyDropdownOptions()->delete();
+
+            foreach ($request->get('dropdown-options') as $key => $val) {
+                if ($key == '__RANDOM_STRING__') {
+                    continue;
+                }
+
+                $property->propertyDropdownOptions()->create($val);
+
+            }
+        }
+    }
+
+
 }

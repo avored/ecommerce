@@ -1,27 +1,4 @@
 <?php
-/**
- * Mage2
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the GNU General Public License v3.0
- * that is bundled with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * https://www.gnu.org/licenses/gpl-3.0.en.html
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to ind.purvesh@gmail.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade Mage2 to newer
- * versions in the future. If you wish to customize Mage2 for your
- * needs please refer to http://mage2.website for more information.
- *
- * @author    Purvesh <ind.purvesh@gmail.com>
- * @copyright 2016-2017 Mage2
- * @license   https://www.gnu.org/licenses/gpl-3.0.en.html GNU General Public License v3.0
- */
 
 use Mage2\Ecommerce\Models\Database\OrderStatus;
 use Illuminate\Database\Migrations\Migration;
@@ -419,26 +396,104 @@ class Mage2EcommerceSchema extends Migration
 
         });
 
-
-
         Schema::create('properties', function (Blueprint $table) {
 
             $table->increments('id');
             $table->string('name');
             $table->string('identifier')->unique();
+            $table->enum('data_type',['INTEGER','DECIMAL','DATETIME','VARCHAR','BOOLEAN','TEXT'])->nullable()->default(null);
             $table->enum('field_type', ['TEXT', 'TEXTAREA', 'CKEDITOR', 'SELECT', 'FILE', 'DATETIME','CHECKBOX','RADIO','SWITCH']);
             $table->integer('sort_order')->nullable()->default(0);
             $table->timestamps();
         });
 
-
+        Schema::create('property_dropdown_options', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('property_id')->unsigned();
+            $table->string('display_text');
+            $table->timestamps();
+            $table->foreign('property_id')
+                ->references('id')->on('properties')->onDelete('cascade');
+        });
 
         Schema::create('product_property_varchar_values', function (Blueprint $table) {
 
             $table->increments('id');
             $table->integer('property_id')->unsigned();
             $table->integer('product_id')->unsigned();
-            $table->string('value');
+            $table->string('value')->nullable()->default(null);
+            $table->timestamps();
+
+            $table->foreign('property_id')
+                ->references('id')->on('properties')->onDelete('cascade');
+            $table->foreign('product_id')
+                ->references('id')->on('products')->onDelete('cascade');
+        });
+
+        Schema::create('product_property_datetime_values', function (Blueprint $table) {
+
+            $table->increments('id');
+            $table->integer('property_id')->unsigned();
+            $table->integer('product_id')->unsigned();
+            $table->timestamp('value')->nullable()->default(null);
+            $table->timestamps();
+
+            $table->foreign('property_id')
+                ->references('id')->on('properties')->onDelete('cascade');
+            $table->foreign('product_id')
+                ->references('id')->on('products')->onDelete('cascade');
+        });
+
+        Schema::create('product_property_integer_values', function (Blueprint $table) {
+
+            $table->increments('id');
+            $table->integer('property_id')->unsigned();
+            $table->integer('product_id')->unsigned();
+            $table->integer('value')->nullable()->default(null);
+            $table->timestamps();
+
+            $table->foreign('property_id')
+                ->references('id')->on('properties')->onDelete('cascade');
+            $table->foreign('product_id')
+                ->references('id')->on('products')->onDelete('cascade');
+        });
+
+        Schema::create('product_property_decimal_values', function (Blueprint $table) {
+
+            $table->increments('id');
+            $table->integer('property_id')->unsigned();
+            $table->integer('product_id')->unsigned();
+            $table->decimal('value')->nullable()->default(null);
+            $table->timestamps();
+
+            $table->foreign('property_id')
+                ->references('id')->on('properties')->onDelete('cascade');
+            $table->foreign('product_id')
+                ->references('id')->on('products')->onDelete('cascade');
+        });
+
+
+
+        Schema::create('product_property_text_values', function (Blueprint $table) {
+
+            $table->increments('id');
+            $table->integer('property_id')->unsigned();
+            $table->integer('product_id')->unsigned();
+            $table->text('value')->nullable()->default(null);
+            $table->timestamps();
+
+            $table->foreign('property_id')
+                ->references('id')->on('properties')->onDelete('cascade');
+            $table->foreign('product_id')
+                ->references('id')->on('products')->onDelete('cascade');
+        });
+
+        Schema::create('product_property_boolean_values', function (Blueprint $table) {
+
+            $table->increments('id');
+            $table->integer('property_id')->unsigned();
+            $table->integer('product_id')->unsigned();
+            $table->tinyInteger('value')->nullable()->default(null);
             $table->timestamps();
 
             $table->foreign('property_id')
@@ -452,17 +507,26 @@ class Mage2EcommerceSchema extends Migration
 
 
 
-
         Schema::create('attributes', function (Blueprint $table) {
 
             $table->increments('id');
             $table->string('name');
             $table->string('identifier')->unique();
+            $table->enum('data_type',['INTEGER','DECIMAL','DATETIME','VARCHAR','BOOLEAN','TEXT'])->nullable()->default(null);
             $table->enum('field_type', ['TEXT', 'TEXTAREA', 'CKEDITOR', 'SELECT', 'FILE', 'DATETIME','CHECKBOX','RADIO','SWITCH']);
+
             $table->integer('sort_order')->nullable()->default(0);
             $table->timestamps();
         });
 
+        Schema::create('attribute_dropdown_options', function (Blueprint $table) {
+            $table->increments('id');
+            $table->integer('attribute_id')->unsigned();
+            $table->string('display_text');
+            $table->timestamps();
+            $table->foreign('attribute_id')
+                ->references('id')->on('attributes')->onDelete('cascade');
+        });
 
 
 

@@ -1,41 +1,17 @@
 <?php
-/**
- * Mage2
- *
- * NOTICE OF LICENSE
- *
- * This source file is subject to the GNU General Public License v3.0
- * that is bundled with this package in the file LICENSE.txt.
- * It is also available through the world-wide-web at this URL:
- * https://www.gnu.org/licenses/gpl-3.0.en.html
- * If you did not receive a copy of the license and are unable to
- * obtain it through the world-wide-web, please send an email
- * to ind.purvesh@gmail.com so we can send you a copy immediately.
- *
- * DISCLAIMER
- *
- * Do not edit or add to this file if you wish to upgrade Mage2 to newer
- * versions in the future. If you wish to customize Mage2 for your
- * needs please refer to http://mage2.website for more information.
- *
- * @author    Purvesh <ind.purvesh@gmail.com>
- * @copyright 2016-2017 Mage2
- * @license   https://www.gnu.org/licenses/gpl-3.0.en.html GNU General Public License v3.0
- */
-
 namespace Mage2\Ecommerce\Models\Database;
 
 use Illuminate\Support\Facades\Session;
 use Mage2\Ecommerce\Image\LocalFile;
-use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Support\Str;
-use Mage2\Ecommerce\Http\Requests\ProductRequest;
 
 class Product extends BaseModel
 {
-
     protected $fillable = ['type', 'name', 'slug', 'sku', 'description',
-        'status', 'in_stock', 'track_stock', 'qty', 'is_taxable', 'page_title', 'page_description'];
+                            'status', 'in_stock', 'track_stock', 'qty',
+                            'is_taxable', 'page_title', 'page_description'
+                        ];
 
     public static function getCollection()
     {
@@ -134,41 +110,111 @@ class Product extends BaseModel
         }
 
 
-        //*****  SAVING PRODUCT ATTRIBUTES  *****//
-        $attributes = $request->get('attributes_specification');
-
-        if (count($attributes) > 0) {
-            foreach ($attributes as $attributeId => $attributeValue) {
-
-                $productId = $this->attributes['id'];
-                $productAttributeValue = ProductAttributeValue::whereProductId($productId)->whereAttributeId($attributeId)->first();
+        $properties = $request->get('property');
 
 
-                if (null === $productAttributeValue && null != $attributeValue) {
+        foreach ($properties as $key => $property) {
 
-                    ProductAttributeValue::create(['attribute_id' => $attributeId,
-                        'product_id' => $this->attributes['id'],
-                        'value' => $attributeValue
-                    ]);
+            foreach ($property as $propertyId => $propertyValue) {
 
+                $propertyModal = Property::findorfail($propertyId);
 
-                } elseif (null !== $productAttributeValue && $attributeValue == null) {
-                    $productAttributeValue->delete();
-                } elseif((null !== $productAttributeValue && $attributeValue != null) ) {
-                    $productAttributeValue->update(['value' => $attributeValue]);
+                if ($propertyModal->data_type == 'VARCHAR') {
+
+                    $propertyVarcharValue = ProductPropertyVarcharValue::whereProductId($this->id)->wherePropertyId($propertyId)->get()->first();
+
+                    if (null === $propertyVarcharValue) {
+                        ProductPropertyVarcharValue::create([
+                            'product_id' => $this->id,
+                            'property_id' => $propertyId,
+                            'value' => $propertyValue
+                        ]);
+                    } else {
+                        $propertyVarcharValue->update(['value' => $propertyValue]);
+                    }
                 }
+
+                if ($propertyModal->data_type == 'BOOLEAN') {
+
+                    $propertyBooleanValue = ProductPropertyBooleanValue::whereProductId($this->id)->wherePropertyId($propertyId)->get()->first();
+
+                    if (null === $propertyBooleanValue) {
+                        ProductPropertyBooleanValue::create([
+                            'product_id' => $this->id,
+                            'property_id' => $propertyId,
+                            'value' => $propertyValue
+                        ]);
+                    } else {
+                        $propertyBooleanValue->update(['value' => $propertyValue]);
+                    }
+                }
+
+                if ($propertyModal->data_type == 'TEXT') {
+
+                    $propertyTextValue = ProductPropertyTextValue::whereProductId($this->id)->wherePropertyId($propertyId)->get()->first();
+
+                    if (null === $propertyTextValue) {
+                        ProductPropertyTextValue::create([
+                            'product_id' => $this->id,
+                            'property_id' => $propertyId,
+                            'value' => $propertyValue
+                        ]);
+                    } else {
+                        $propertyTextValue->update(['value' => $propertyValue]);
+                    }
+                }
+
+                if ($propertyModal->data_type == 'DECIMAL') {
+
+                    $propertyDecimalValue = ProductPropertyDecimalValue::whereProductId($this->id)->wherePropertyId($propertyId)->get()->first();
+
+                    if (null === $propertyDecimalValue) {
+                        ProductPropertyDecimalValue::create([
+                            'product_id' => $this->id,
+                            'property_id' => $propertyId,
+                            'value' => $propertyValue
+                        ]);
+                    } else {
+                        $propertyDecimalValue->update(['value' => $propertyValue]);
+                    }
+                }
+                if ($propertyModal->data_type == 'INTEGER') {
+
+                    $propertyIntegerValue = ProductPropertyIntegerValue::whereProductId($this->id)->wherePropertyId($propertyId)->get()->first();
+
+                    if (null === $propertyIntegerValue) {
+                        ProductPropertyIntegerValue::create([
+                            'product_id' => $this->id,
+                            'property_id' => $propertyId,
+                            'value' => $propertyValue
+                        ]);
+                    } else {
+                        $propertyIntegerValue->update(['value' => $propertyValue]);
+                    }
+                }
+                if ($propertyModal->data_type == 'DATETIME') {
+
+                    $propertyDatetimeValue = ProductPropertyDatetimeValue::whereProductId($this->id)->wherePropertyId($propertyId)->get()->first();
+
+                    if (null === $propertyDatetimeValue) {
+                        ProductPropertyDatetimeValue::create([
+                            'product_id' => $this->id,
+                            'property_id' => $propertyId,
+                            'value' => $propertyValue
+                        ]);
+                    } else {
+                        $propertyDatetimeValue->update(['value' => $propertyValue]);
+                    }
+                }
+
+
             }
+
         }
+
 
     }
 
-
-    /**
-     * Return Product model by Product Slug
-     *
-     * @param $slug
-     * return \Mage2\Ecommerce\Models\Database\Product $product
-     */
     public static function getProductBySlug($slug)
     {
         $model = new static;
@@ -179,23 +225,6 @@ class Product extends BaseModel
     public function getReviews()
     {
         return $this->reviews()->where('status', '=', 'ENABLED')->get();
-    }
-
-    public function getAssignedVariableAttributes()
-    {
-        return $this->productAttributes;
-        $attributes = Collection::make([]);
-
-        $attributeValues = ProductAttributeValue::whereProductId($this->attributes['id'])->get();
-
-        if($attributeValues->count() > 0) {
-
-            foreach ($attributeValues as $attributeValue) {
-                $attributes->push($attributeValue->attribute);
-            }
-        }
-
-        return $attributes;
     }
 
     /**
@@ -220,12 +249,6 @@ class Product extends BaseModel
 
     }
 
-    public function getAssignedVariationBytAttributeId($attributeId)
-    {
-        return $this->productVariations()
-            ->where('product_attribute_id', '=', $attributeId)
-            ->get();
-    }
 
     /*
      * Calculate Tax amount based on default country and return tax amount
@@ -235,8 +258,6 @@ class Product extends BaseModel
 
     public function getTaxAmount($price = NULL)
     {
-
-
         $defaultCountryId = Configuration::getConfiguration('mage2_tax_class_default_country_for_tax_calculation');
         $taxRule = TaxRule::where('country_id', '=', $defaultCountryId)->orderBy('priority', 'DESC')->first();
 
@@ -252,41 +273,6 @@ class Product extends BaseModel
         return $taxAmount;
     }
 
-    /*
-    * Get the Price for the Product
-    *
-    * @return \Mage2\Ecommerce\Models\Database\Attribute
-    */
-    public function getSpecificationValue($attribute)
-    {
-
-
-        $productAttributeValue = $this->productAttributeValue()->whereAttributeId($attribute->id)->first();
-
-        if (null !== $productAttributeValue) {
-            if ($attribute->field_type == 'SELECT') {
-                $selectedDropdownOption = $attribute->attributeDropdownOptions()->whereId($productAttributeValue->value)->first();
-                return $selectedDropdownOption->id;
-
-            } else {
-                return $productAttributeValue->value;
-            }
-
-        }
-
-        return "";
-    }
-
-
-    /*
-     * Get the Product Assigned Property List
-     *
-     * @return \Mage2\Ecommerce\Models\Database\Property
-     */
-    public function getPropertyLists()
-    {
-        return [];
-    }
 
     /*
      * Get the Price for the Product
@@ -298,46 +284,6 @@ class Product extends BaseModel
         $row = $this->prices()->first();
 
         return (isset($row->price)) ? $row->price : null;
-    }
-
-
-    public function productAttributes()
-    {
-        return $this->belongsToMany(Attribute::class);
-    }
-
-
-    public function combinations()
-    {
-        $combinations = Collection::make([]);
-        $model = new static;
-        $productIds = ProductCombination::whereProductId($this->attributes['id'])->pluck('combination_id');
-        foreach ($productIds as $id) {
-            $combinations->push($model->findorfail($id));
-        }
-
-        return $combinations;
-    }
-
-    public function getCombinationAttributeList() {
-        $attributes = Collection::make([]);
-        $subProductIds = $this->combinations()->pluck('id');
-
-        $productAttributeValues = ProductAttributeValue::whereIn('product_id',$subProductIds->toArray())->get();
-        foreach ($productAttributeValues as $productAttributeValue) {
-            $attributes->push($productAttributeValue->attribute);
-        }
-        return $attributes;
-    }
-
-
-    public function getCombinationAttributeValueList() {
-
-        $subProductIds = $this->combinations()->pluck('id');
-        $productAttributeValues = ProductAttributeValue::whereIn('product_id',$subProductIds->toArray())->get()->pluck('value');
-
-        return $productAttributeValues;
-
     }
 
 
@@ -361,14 +307,67 @@ class Product extends BaseModel
         return $this->hasMany(ProductImage::class);
     }
 
-    public function relatedProducts()
+    public function getProductAllProperties()
     {
-        return $this->hasMany(RelatedProduct::class);
+        $collection = Collection::make([]);
+
+
+        foreach ($this->productVarcharProperties as $item) {
+            $collection->push($item);
+        }
+        foreach ($this->productBooleanProperties as $item) {
+            $collection->push($item);
+        }
+
+        foreach ($this->productTextProperties as $item) {
+            $collection->push($item);
+        }
+        foreach ($this->productDecimalProperties as $item) {
+            $collection->push($item);
+        }
+        foreach ($this->productDecimalProperties as $item) {
+            $collection->push($item);
+        }
+        foreach ($this->productIntegerProperties as $item) {
+            $collection->push($item);
+        }
+
+        foreach ($this->productDatetimeProperties as $item) {
+            $collection->push($item);
+        }
+
+
+        return $collection;
     }
 
-    public function productAttributeValue()
+    public function productVarcharProperties()
     {
-        return $this->hasMany(ProductAttributeValue::class);
+        return $this->hasMany(ProductPropertyVarcharValue::class);
+    }
+
+    public function productDatetimeProperties()
+    {
+        return $this->hasMany(ProductPropertyDatetimeValue::class);
+    }
+
+    public function productBooleanProperties()
+    {
+        return $this->hasMany(ProductPropertyBooleanValue::class);
+    }
+
+    public function productIntegerProperties()
+    {
+        return $this->hasMany(ProductPropertyIntegerValue::class);
+    }
+
+    public function productTextProperties()
+    {
+        return $this->hasMany(ProductPropertyTextValue::class);
+    }
+
+    public function productDecimalProperties()
+    {
+        return $this->hasMany(ProductPropertyDecimalValue::class);
     }
 
     public function attribute()
@@ -380,4 +379,76 @@ class Product extends BaseModel
     {
         return $this->hasMany(Order::class);
     }
+
+    public function relatedProducts()
+    {
+        return $this->hasMany(RelatedProduct::class);
+    }
+
+    /**
+     *
+
+
+
+     public function combinations()
+    {
+        $combinations = Collection::make([]);
+        $model = new static;
+        $productIds = ProductCombination::whereProductId($this->attributes['id'])->pluck('combination_id');
+        foreach ($productIds as $id) {
+        $combinations->push($model->findorfail($id));
+        }
+
+        return $combinations;
+        }
+
+        public function getCombinationAttributeList() {
+        $attributes = Collection::make([]);
+        $subProductIds = $this->combinations()->pluck('id');
+
+        $productAttributeValues = ProductAttributeValue::whereIn('product_id',$subProductIds->toArray())->get();
+        foreach ($productAttributeValues as $productAttributeValue) {
+        $attributes->push($productAttributeValue->attribute);
+        }
+        return $attributes;
+    }
+
+
+    public function getCombinationAttributeValueList() {
+
+        $subProductIds = $this->combinations()->pluck('id');
+        $productAttributeValues = ProductAttributeValue::whereIn('product_id',$subProductIds->toArray())->get()->pluck('value');
+
+        return $productAttributeValues;
+
+    }
+
+    public function getAssignedVariationBytAttributeId($attributeId)
+    {
+        return $this->productVariations()
+        ->where('product_attribute_id', '=', $attributeId)
+        ->get();
+    }
+
+    public function getSpecificationValue($attribute)
+    {
+
+
+        $productAttributeValue = $this->productAttributeValue()->whereAttributeId($attribute->id)->first();
+
+        if (null !== $productAttributeValue) {
+            if ($attribute->field_type == 'SELECT') {
+                $selectedDropdownOption = $attribute->attributeDropdownOptions()->whereId($productAttributeValue->value)->first();
+                return $selectedDropdownOption->id;
+
+            } else {
+                return $productAttributeValue->value;
+            }
+
+        }
+
+        return "";
+    }
+
+     */
 }
