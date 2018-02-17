@@ -7,6 +7,7 @@ use Mage2\Ecommerce\Models\Database\AdminUser;
 use Mage2\Ecommerce\Models\Database\Role;
 use Mage2\Ecommerce\Http\Requests\AdminUserRequest;
 use Mage2\Ecommerce\DataGrid\Facade as DataGrid;
+use Mage2\Ecommerce\Image\Facade as Image;
 
 class AdminUserController extends AdminController
 {
@@ -104,6 +105,16 @@ class AdminUserController extends AdminController
      */
     public function update(AdminUserRequest $request, $id)
     {
+        $image = $request->file('image');
+        $tmpPath = str_split(strtolower(str_random(3)));
+        $checkDirectory = '/uploads/users/images/' . implode('/', $tmpPath);
+
+        $image = Image::upload($image, $checkDirectory);
+
+
+        $request->merge(['image_path' => $image->relativePath]);
+
+
         $user = AdminUser::findorfail($id);
 
         $user->update($request->all());
@@ -137,4 +148,19 @@ class AdminUserController extends AdminController
 
         return view('mage2-ecommerce::admin.admin-user.show-api')->with('client', $client);
     }
+
+    /**
+     * Display a listing of the resource.
+     *
+     * @return \Illuminate\Http\Response
+     */
+    public function show($id)
+    {
+        $user = Auth::guard('admin')->user();
+
+        return view('mage2-ecommerce::admin.admin-user.show')->with('user', $user);
+
+    }
 }
+
+
