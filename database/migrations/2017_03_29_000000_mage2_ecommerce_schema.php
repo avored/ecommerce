@@ -56,6 +56,7 @@ class Mage2EcommerceSchema extends Migration
             $table->string('company_name')->nullable();
             $table->string('phone')->nullable();
             $table->enum('status', ['GUEST', 'LIVE'])->default('LIVE');
+            $table->string('activation_token')->nullable()->default(null);
             $table->rememberToken();
             $table->timestamps();
         });
@@ -157,6 +158,12 @@ class Mage2EcommerceSchema extends Migration
             $table->tinyInteger('track_stock')->nullable()->default(null);
             $table->decimal('qty', 10, 6)->nullable();
             $table->tinyInteger('is_taxable')->nullable()->default(null);
+
+            $table->float('weight')->nullable()->default(null);
+            $table->float('width')->nullable()->default(null);
+            $table->float('height')->nullable()->default(null);
+            $table->float('length')->nullable()->default(null);
+
 
             $table->string('meta_title')->nullable()->default(null);
             $table->string('meta_description')->nullable()->default(null);
@@ -820,6 +827,7 @@ class Mage2EcommerceSchema extends Migration
         Configuration::create(['configuration_key' => 'general_site_title', 'configuration_value' => 'Mage2 Laravel Ecommerce']);
         Configuration::create(['configuration_key' => 'general_site_description', 'configuration_value' => 'Mage2 Laravel Ecommerce']);
 
+        Configuration::create(['configuration_key' => 'general_site_description', 'configuration_value' => 'Mage2 Laravel Ecommerce']);
         $path = public_path() . '/countries.json';
 
         $json = json_decode(file_get_contents($path), true);
