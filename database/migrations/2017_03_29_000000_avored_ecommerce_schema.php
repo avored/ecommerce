@@ -8,7 +8,7 @@ use AvoRed\Ecommerce\Models\Database\Configuration;
 use AvoRed\Ecommerce\Models\Database\Country;
 use AvoRed\Ecommerce\Models\Database\TaxRule;
 
-class AvoRedEcommerceSchema extends Migration
+class AvoredEcommerceSchema extends Migration
 {
 
     /**
