@@ -13,6 +13,20 @@
 
 $baseAdminUrl = config('avored-ecommerce.admin_url');
 
+
+
+Route::middleware(['web'])->group(function (){
+
+    Route::get('test',function (){
+
+        return view('avored-ecommerce::test');
+
+    });
+
+
+});
+
+
 Route::middleware(['web'])
     ->prefix($baseAdminUrl)
     ->name('admin.')
