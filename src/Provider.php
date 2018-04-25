@@ -153,6 +153,7 @@ class Provider extends ServiceProvider
             ->label('Catalog')
             ->route('#')
             ->icon('fa fa-book');
+
         $catalogMenu = AdminMenuFacade::get('catalog');
         $productMenu = new AdminMenu();
         $productMenu->key('product')
@@ -204,7 +205,15 @@ class Provider extends ServiceProvider
             ->label('Configuration')
             ->route('admin.configuration')
             ->icon('fas fa-cog');
-        $systemMenu->subMenu('configuration', $configurationMenu);
+
+
+        $frontMenu = new AdminMenu();
+        $frontMenu->key('menu')
+            ->label('Menu')
+            ->route('admin.menu.index')
+            ->icon('fas fa-cog');
+        $systemMenu->subMenu('menu', $frontMenu);
+
         $orderMenu = new AdminMenu();
         $orderMenu->key('order')
             ->label('Order')
