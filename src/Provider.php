@@ -277,17 +277,6 @@ class Provider extends ServiceProvider
                 ->route('checkout.index');
         });
 
-
-        /*
-        $cart = MenuFacade::add('cart');
-        $cart->label('Cart')
-            ->route('cart.view');
-
-        $checkout = MenuFacade::add('checkout');
-        $checkout->label('Checkout')
-            ->route('checkout.index');
-        */
-
     }
 
     /**
@@ -656,6 +645,11 @@ class Provider extends ServiceProvider
         WidgetFacade::make($totalOrderWidget->identifier(), $totalOrderWidget);
     }
 
+    /**
+     * Register the Config Data
+     *
+     * @return void
+     */
     public function registerConfigData()
     {
         $authConfig = $this->app['config']->get('auth', []);
@@ -664,6 +658,11 @@ class Provider extends ServiceProvider
         $this->mergeConfigFrom(__DIR__.'/../config/avored-ecommerce.php', 'avored-ecommerce');
     }
 
+    /**
+     * Register the Publish Files
+     *
+     * @return void
+     */
     public function publishFiles()
     {
         $this->publishes([
