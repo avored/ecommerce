@@ -673,6 +673,10 @@ class Provider extends ServiceProvider
         ],'config');
 
         $this->publishes([
+            __DIR__ . '/../resources/lang' => base_path('themes/avored/default/lang/vendor')
+        ],'avored-module-lang');
+
+        $this->publishes([
             __DIR__ . '/../resources/views' => base_path('themes/avored/default/views/vendor')
         ],'avored-module-views');
         $this->publishes([
