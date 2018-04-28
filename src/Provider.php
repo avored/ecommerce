@@ -152,57 +152,77 @@ class Provider extends ServiceProvider
      */
     protected function registerAdminMenu()
     {
-        AdminMenuFacade::add('catalog')
-            ->label('Catalog')
+        AdminMenuFacade::add('shop')
+            ->label('Shop')
             ->route('#')
-            ->icon('fa fa-book');
+            ->icon('fas fa-cart-plus');
 
-        $catalogMenu = AdminMenuFacade::get('catalog');
+        $shopMenu = AdminMenuFacade::get('shop');
+
         $productMenu = new AdminMenu();
         $productMenu->key('product')
             ->label('Product')
             ->route('admin.product.index')
             ->icon('fab fa-dropbox');
-        $catalogMenu->subMenu('product', $productMenu);
+        $shopMenu->subMenu('product', $productMenu);
+
         $categoryMenu = new AdminMenu();
         $categoryMenu->key('category')
             ->label('Category')
             ->route('admin.category.index')
             ->icon('far fa-building');
-        $catalogMenu->subMenu('category', $categoryMenu);
+        $shopMenu->subMenu('category', $categoryMenu);
+
         $attributeMenu = new AdminMenu();
         $attributeMenu->key('attribute')
             ->label('Attribute')
             ->route('admin.attribute.index')
             ->icon('fas fa-file-alt');
-        $catalogMenu->subMenu('attribute', $attributeMenu);
+        $shopMenu->subMenu('attribute', $attributeMenu);
+
         $propertyMenu = new AdminMenu();
         $propertyMenu->key('property')
             ->label('Property')
             ->route('admin.property.index')
             ->icon('fas fa-file-powerpoint');
-        $catalogMenu->subMenu('property', $propertyMenu);
+        $shopMenu->subMenu('property', $propertyMenu);
+
+        $orderMenu = new AdminMenu();
+        $orderMenu->key('order')
+            ->label('Order')
+            ->route('admin.order.index')
+            ->icon('fas fa-dollar-sign');
+        $shopMenu->subMenu('order', $orderMenu);
+
+
+
+
+
+
+        AdminMenuFacade::add('cms')
+            ->label('CMS')
+            ->route('#')
+            ->icon('fas fa-building');
+
+        $cmsMenu = AdminMenuFacade::get('cms');
+
+
+
 
         $pageMenu = new AdminMenu();
         $pageMenu->key('page')
             ->label('Page')
             ->route('admin.page.index');
-        //$catalogMenu->subMenu('page', $pageMenu);
-        $reviewMenu = new AdminMenu();
-        $reviewMenu->key('review')
-            ->label('Review')
-            ->route('admin.review.index');
-        //$catalogMenu->subMenu('review', $reviewMenu);
-        AdminMenuFacade::add('sale')
-            ->label('Sales')
-            ->route('#')
-            ->icon('fas fa-chart-line');
-        $saleMenu = AdminMenuFacade::get('sale');
+        $cmsMenu->subMenu('page', $pageMenu);
+
+
+
         AdminMenuFacade::add('system')
             ->label('System')
             ->route('#')
             ->icon('fas fa-cogs');
         $systemMenu = AdminMenuFacade::get('system');
+
         $configurationMenu = new AdminMenu();
         $configurationMenu->key('configuration')
             ->label('Configuration')
@@ -215,43 +235,30 @@ class Provider extends ServiceProvider
         $frontMenu->key('menu')
             ->label('Menu')
             ->route('admin.menu.index')
-            ->icon('fas fa-cog');
+            ->icon('fas fa-leaf');
         $systemMenu->subMenu('menu', $frontMenu);
 
-        $orderMenu = new AdminMenu();
-        $orderMenu->key('order')
-            ->label('Order')
-            ->route('admin.order.index')
-            ->icon('fas fa-dollar-sign');
-        $saleMenu->subMenu('order', $orderMenu);
-        $giftCouponMenu = new AdminMenu();
-        $giftCouponMenu->key('gift-coupon')
-            ->label('Gift Coupon')
-            ->route('admin.gift-coupon.index');
-        //$saleMenu->subMenu('gift-coupon', $giftCouponMenu );
-        $orderStatusMenu = new AdminMenu();
-        $orderStatusMenu->key('order-status')
-            ->label('Order Status')
-            ->route('admin.order-status.index');
-        //$saleMenu->subMenu('order-status', $orderStatusMenu );
+
         $adminUserMenu = new AdminMenu();
         $adminUserMenu->key('admin-user')
             ->label('Admin User')
             ->route('admin.admin-user.index')
             ->icon('fas fa-user');
         $systemMenu->subMenu('admin-user', $adminUserMenu);
-        $themeMenu = new AdminMenu();
-        $themeMenu->key('themes')
-            ->label('Themes ')
-            ->route('admin.theme.index')
-            ->icon('fas fa-adjust');
-        $systemMenu->subMenu('themes', $themeMenu);
+
         $roleMenu = new AdminMenu();
         $roleMenu->key('roles')
             ->label('Role')
             ->route('admin.role.index')
             ->icon('fab fa-periscope');
         $systemMenu->subMenu('roles', $roleMenu);
+
+        $themeMenu = new AdminMenu();
+        $themeMenu->key('themes')
+            ->label('Themes ')
+            ->route('admin.theme.index')
+            ->icon('fas fa-adjust');
+        $systemMenu->subMenu('themes', $themeMenu);
     }
 
     /**
