@@ -2,6 +2,7 @@
 
 namespace AvoRed\Ecommerce;
 
+use AvoRed\Ecommerce\Models\Database\Page;
 use AvoRed\Framework\Menu\Menu;
 use Carbon\Carbon;
 use Laravel\Passport\Passport;
@@ -41,6 +42,7 @@ use AvoRed\Ecommerce\Http\ViewComposers\MyAccountSidebarComposer;
 use AvoRed\Ecommerce\Widget\TotalOrder\Widget as TotalOrderWidget;
 use AvoRed\Ecommerce\Http\ViewComposers\RelatedProductViewComposer;
 use AvoRed\Ecommerce\Http\ViewComposers\ProductSpecificationComposer;
+use AvoRed\Framework\AdminConfiguration\Facade as AdminConfigurationFacade;
 
 class Provider extends ServiceProvider
 {
@@ -62,6 +64,7 @@ class Provider extends ServiceProvider
         $this->registerPaymentOptions();
         $this->registerShippingOption();
         $this->registerPermissions();
+        $this->registerAdminConfiguration();
     }
 
     /**
@@ -195,10 +198,6 @@ class Provider extends ServiceProvider
         $shopMenu->subMenu('order', $orderMenu);
 
 
-
-
-
-
         AdminMenuFacade::add('cms')
             ->label('CMS')
             ->route('#')
@@ -212,9 +211,15 @@ class Provider extends ServiceProvider
         $pageMenu = new AdminMenu();
         $pageMenu->key('page')
             ->label('Page')
+            ->icon('fas fa-newspaper')
             ->route('admin.page.index');
         $cmsMenu->subMenu('page', $pageMenu);
-
+        $frontMenu = new AdminMenu();
+        $frontMenu->key('menu')
+            ->label('Menu')
+            ->route('admin.menu.index')
+            ->icon('fas fa-leaf');
+        $cmsMenu->subMenu('menu', $frontMenu);
 
 
         AdminMenuFacade::add('system')
@@ -231,12 +236,7 @@ class Provider extends ServiceProvider
         $systemMenu->subMenu('configuration', $configurationMenu);
 
 
-        $frontMenu = new AdminMenu();
-        $frontMenu->key('menu')
-            ->label('Menu')
-            ->route('admin.menu.index')
-            ->icon('fas fa-leaf');
-        $systemMenu->subMenu('menu', $frontMenu);
+
 
 
         $adminUserMenu = new AdminMenu();
@@ -287,6 +287,55 @@ class Provider extends ServiceProvider
     }
 
     /**
+     * Register the Menus.
+     *
+     * @return void
+     */
+    protected function registerAdminConfiguration()
+    {
+
+        $configurationGroup = AdminConfigurationFacade::add('general')
+            ->label('General');
+
+
+        $configurationGroup->addConfiguration('default_site_title')
+            ->label('Default Site Title')
+            ->type('text')
+            ->name('default_site_title');
+
+        $configurationGroup->addConfiguration('general_site_description')
+            ->label('Default Site Description')
+            ->type('text')
+            ->name('general_site_description');
+
+        $configurationGroup->addConfiguration('general_administrator_email')
+            ->label('Administrator Email')
+            ->type('text')
+            ->name('general_administrator_email');
+
+        $configurationGroup->addConfiguration('general_term_condition_page')
+            ->label('Term & Condition Page')
+            ->type('select')
+            ->name('general_administrator_email')
+            ->options(function (){
+                $options = Page::all()->pluck('name','id');
+                return $options;
+            });
+
+        $configurationGroup->addConfiguration('general_home_page')
+            ->label('Home Page')
+            ->type('select')
+            ->name('general_home_page')
+            ->options(function (){
+                $options = Page::all()->pluck('name','id');
+                return $options;
+            });
+
+
+
+    }
+
+        /**
      * Register the Menus.
      *
      * @return void
@@ -434,7 +483,7 @@ class Provider extends ServiceProvider
     }
 
     /**
-     * Registering PAyment Option for the App.
+     * Registering Payment Option for the App.
      *
      *
      * @return void
