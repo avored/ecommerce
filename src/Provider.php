@@ -4,7 +4,6 @@ namespace AvoRed\Ecommerce;
 
 use AvoRed\Ecommerce\Models\Database\Country;
 use AvoRed\Ecommerce\Models\Database\Page;
-use AvoRed\Framework\Menu\Menu;
 use Carbon\Carbon;
 use Laravel\Passport\Passport;
 use Illuminate\Support\Facades\Auth;
@@ -16,18 +15,17 @@ use Laravel\Passport\Console\KeysCommand;
 use AvoRed\Ecommerce\Shipping\FreeShipping;
 use Laravel\Passport\Console\ClientCommand;
 use Laravel\Passport\Console\InstallCommand;
+use AvoRed\Ecommerce\Http\Middleware\Visitor;
 use AvoRed\Ecommerce\Http\Middleware\AdminAuth;
-use AvoRed\Ecommerce\Http\Middleware\FrontAuth;
 use AvoRed\Ecommerce\Http\Middleware\Permission;
 use AvoRed\Ecommerce\Http\Middleware\AdminApiAuth;
+use AvoRed\Ecommerce\Http\Middleware\ProductViewed;
 use AvoRed\Framework\Widget\Facade as WidgetFacade;
 use AvoRed\Framework\Payment\Facade as PaymentFacade;
 use AvoRed\Framework\Shipping\Facade as ShippingFacade;
 use AvoRed\Ecommerce\Http\Middleware\RedirectIfAdminAuth;
-use AvoRed\Ecommerce\Http\Middleware\RedirectIfFrontAuth;
 use AvoRed\Ecommerce\Http\ViewComposers\AdminNavComposer;
 use AvoRed\Framework\AdminMenu\Facade as AdminMenuFacade;
-use AvoRed\Framework\Menu\Facade as MenuFacade;
 use AvoRed\Framework\Breadcrumb\Facade as BreadcrumbFacade;
 use AvoRed\Framework\Permission\Facade as PermissionFacade;
 use AvoRed\Ecommerce\Payment\Pickup\Payment as PickupPayment;
@@ -37,6 +35,7 @@ use AvoRed\Ecommerce\Http\ViewComposers\CategoryFieldsComposer;
 use AvoRed\Ecommerce\Widget\TotalUser\Widget as TotalUserWidget;
 use AvoRed\Ecommerce\Widget\TotalOrder\Widget as TotalOrderWidget;
 use AvoRed\Ecommerce\Http\ViewComposers\RelatedProductViewComposer;
+use AvoRed\Ecommerce\Http\ViewComposers\ProductSpecificationComposer;
 use AvoRed\Framework\AdminConfiguration\Facade as AdminConfigurationFacade;
 
 class Provider extends ServiceProvider
@@ -70,6 +69,7 @@ class Provider extends ServiceProvider
     public function register()
     {
         $this->registerConfigData();
+
         Passport::ignoreMigrations();
     }
 
@@ -109,19 +109,11 @@ class Provider extends ServiceProvider
      */
     public function registerViewComposerData()
     {
-        View::composer(
-            'avored-ecommerce::admin.layouts.left-nav',
-            AdminNavComposer::class
-        );
-
-        View::composer(
-            'avored-ecommerce::admin.category._fields',
-            CategoryFieldsComposer::class
-        );
-
+        View::composer('avored-ecommerce::admin.layouts.left-nav', AdminNavComposer::class);
+        View::composer(['avored-ecommerce::admin.category._fields'], CategoryFieldsComposer::class);
         View::composer(['avored-ecommerce::admin.product.create',
-                        'avored-ecommerce::product.edit',],
-            ProductFieldsComposer::class);
+                        'avored-ecommerce::product.edit',
+                        ], ProductFieldsComposer::class);
 
     }
 
@@ -132,7 +124,7 @@ class Provider extends ServiceProvider
    */
     public function registerPassportResources()
     {
-        //Passport::ignoreMigrations();
+        Passport::ignoreMigrations();
         Passport::routes();
         Passport::tokensExpireIn(Carbon::now()->addDays(15));
         $this->commands([
@@ -253,31 +245,6 @@ class Provider extends ServiceProvider
             ->route('admin.theme.index')
             ->icon('fas fa-adjust');
         $systemMenu->subMenu('themes', $themeMenu);
-    }
-
-    /**
-     * Register the Menus.
-     *
-     * @return void
-     */
-    protected function registerFrontMenu()
-    {
-        MenuFacade::make('my-account',function (Menu $accountMenu){
-            $accountMenu->label('My Account')
-                ->route('my-account.home');
-        });
-
-        MenuFacade::make('cart',function (Menu $accountMenu){
-            $accountMenu->label('Cart')
-                ->route('cart.view');
-        });
-
-
-        MenuFacade::make('checkout',function (Menu $accountMenu){
-            $accountMenu->label('Checkout')
-                ->route('checkout.index');
-        });
-
     }
 
     /**
@@ -587,7 +554,7 @@ class Provider extends ServiceProvider
     }
 
     /**
-     * Register Shipping Option for App.
+     * Register Shippiong Option for App.
      *
      * @return void
      */
