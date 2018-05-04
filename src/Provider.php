@@ -16,22 +16,18 @@ use Laravel\Passport\Console\KeysCommand;
 use AvoRed\Ecommerce\Shipping\FreeShipping;
 use Laravel\Passport\Console\ClientCommand;
 use Laravel\Passport\Console\InstallCommand;
-use AvoRed\Ecommerce\Http\Middleware\Visitor;
 use AvoRed\Ecommerce\Http\Middleware\AdminAuth;
 use AvoRed\Ecommerce\Http\Middleware\FrontAuth;
 use AvoRed\Ecommerce\Http\Middleware\Permission;
 use AvoRed\Ecommerce\Http\Middleware\AdminApiAuth;
-use AvoRed\Ecommerce\Http\Middleware\ProductViewed;
 use AvoRed\Framework\Widget\Facade as WidgetFacade;
 use AvoRed\Framework\Payment\Facade as PaymentFacade;
 use AvoRed\Framework\Shipping\Facade as ShippingFacade;
 use AvoRed\Ecommerce\Http\Middleware\RedirectIfAdminAuth;
 use AvoRed\Ecommerce\Http\Middleware\RedirectIfFrontAuth;
 use AvoRed\Ecommerce\Http\ViewComposers\AdminNavComposer;
-use AvoRed\Ecommerce\Http\ViewComposers\CheckoutComposer;
 use AvoRed\Framework\AdminMenu\Facade as AdminMenuFacade;
 use AvoRed\Framework\Menu\Facade as MenuFacade;
-use AvoRed\Ecommerce\Http\ViewComposers\LayoutAppComposer;
 use AvoRed\Framework\Breadcrumb\Facade as BreadcrumbFacade;
 use AvoRed\Framework\Permission\Facade as PermissionFacade;
 use AvoRed\Ecommerce\Payment\Pickup\Payment as PickupPayment;
@@ -39,10 +35,8 @@ use AvoRed\Ecommerce\Payment\Stripe\Payment as StripePayment;
 use AvoRed\Ecommerce\Http\ViewComposers\ProductFieldsComposer;
 use AvoRed\Ecommerce\Http\ViewComposers\CategoryFieldsComposer;
 use AvoRed\Ecommerce\Widget\TotalUser\Widget as TotalUserWidget;
-use AvoRed\Ecommerce\Http\ViewComposers\MyAccountSidebarComposer;
 use AvoRed\Ecommerce\Widget\TotalOrder\Widget as TotalOrderWidget;
 use AvoRed\Ecommerce\Http\ViewComposers\RelatedProductViewComposer;
-use AvoRed\Ecommerce\Http\ViewComposers\ProductSpecificationComposer;
 use AvoRed\Framework\AdminConfiguration\Facade as AdminConfigurationFacade;
 
 class Provider extends ServiceProvider
@@ -76,7 +70,6 @@ class Provider extends ServiceProvider
     public function register()
     {
         $this->registerConfigData();
-
         Passport::ignoreMigrations();
     }
 
@@ -106,11 +99,7 @@ class Provider extends ServiceProvider
         $router->aliasMiddleware('admin.api.auth', AdminApiAuth::class);
         $router->aliasMiddleware('admin.auth', AdminAuth::class);
         $router->aliasMiddleware('admin.guest', RedirectIfAdminAuth::class);
-        $router->aliasMiddleware('front.auth', FrontAuth::class);
-        $router->aliasMiddleware('front.guest', RedirectIfFrontAuth::class);
-        $router->aliasMiddleware('visitor', Visitor::class);
         $router->aliasMiddleware('permission', Permission::class);
-        //$router->aliasMiddleware('product.viewed', ProductViewed::class);
     }
 
     /**
@@ -120,15 +109,19 @@ class Provider extends ServiceProvider
      */
     public function registerViewComposerData()
     {
-        View::composer('avored-ecommerce::admin.layouts.left-nav', AdminNavComposer::class);
-        View::composer(['avored-ecommerce::admin.category._fields'], CategoryFieldsComposer::class);
-        View::composer('checkout.index', CheckoutComposer::class);
-        View::composer('user.my-account.sidebar', MyAccountSidebarComposer::class);
-        View::composer('layouts.app', LayoutAppComposer::class);
-        View::composer('user.my-account.sidebar', MyAccountSidebarComposer::class);
+        View::composer(
+            'avored-ecommerce::admin.layouts.left-nav',
+            AdminNavComposer::class
+        );
+
+        View::composer(
+            'avored-ecommerce::admin.category._fields',
+            CategoryFieldsComposer::class
+        );
+
         View::composer(['avored-ecommerce::admin.product.create',
-                        'avored-ecommerce::product.edit',
-                        ], ProductFieldsComposer::class);
+                        'avored-ecommerce::product.edit',],
+            ProductFieldsComposer::class);
 
     }
 
@@ -139,7 +132,7 @@ class Provider extends ServiceProvider
    */
     public function registerPassportResources()
     {
-        Passport::ignoreMigrations();
+        //Passport::ignoreMigrations();
         Passport::routes();
         Passport::tokensExpireIn(Carbon::now()->addDays(15));
         $this->commands([
@@ -594,7 +587,7 @@ class Provider extends ServiceProvider
     }
 
     /**
-     * Register Shippiong Option for App.
+     * Register Shipping Option for App.
      *
      * @return void
      */
