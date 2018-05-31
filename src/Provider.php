@@ -34,12 +34,18 @@ use AvoRed\Framework\AdminMenu\AdminMenu;
 use AvoRed\Ecommerce\Widget\TotalUser\Widget as TotalUserWidget;
 use AvoRed\Ecommerce\Widget\TotalOrder\Widget as TotalOrderWidget;
 
-
+//View Composers
 use AvoRed\Ecommerce\Http\ViewComposers\ProductFieldsComposer;
 use AvoRed\Ecommerce\Http\ViewComposers\CategoryFieldsComposer;
 use AvoRed\Ecommerce\Http\ViewComposers\AdminNavComposer;
 use AvoRed\Ecommerce\Http\ViewComposers\AdminUserFieldsComposer;
 use AvoRed\Ecommerce\Console\AdminMakeCommand;
+
+//Model Contracts
+use AvoRed\Ecommerce\Models\Contracts\AdminUserInterface;
+
+//Repositories
+use AvoRed\Ecommerce\Models\Repository\AdminUserRepository;
 
 class Provider extends ServiceProvider
 {
@@ -62,6 +68,7 @@ class Provider extends ServiceProvider
         $this->registerPermissions();
         $this->registerAdminConfiguration();
         $this->registerAdminMakeCommand();
+        $this->registerModelContracts();
     }
 
     /**
@@ -809,5 +816,16 @@ class Provider extends ServiceProvider
         $this->publishes([
             __DIR__ . '/../database/migrations' => database_path('avored-migrations'),
         ]);
+    }
+
+
+    /**
+     * Register the Admin Menu instance.
+     *
+     * @return void
+     */
+    protected function registerModelContracts()
+    {
+        $this->app->bind(AdminUserInterface::class,AdminUserRepository::class);
     }
 }
