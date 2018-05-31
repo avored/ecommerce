@@ -39,6 +39,7 @@ use AvoRed\Ecommerce\Http\ViewComposers\ProductFieldsComposer;
 use AvoRed\Ecommerce\Http\ViewComposers\CategoryFieldsComposer;
 use AvoRed\Ecommerce\Http\ViewComposers\AdminNavComposer;
 use AvoRed\Ecommerce\Http\ViewComposers\AdminUserFieldsComposer;
+use AvoRed\Ecommerce\Console\AdminMakeCommand;
 
 class Provider extends ServiceProvider
 {
@@ -60,6 +61,7 @@ class Provider extends ServiceProvider
         $this->registerShippingOption();
         $this->registerPermissions();
         $this->registerAdminConfiguration();
+        $this->registerAdminMakeCommand();
     }
 
     /**
@@ -72,6 +74,21 @@ class Provider extends ServiceProvider
         $this->registerConfigData();
 
         Passport::ignoreMigrations();
+    }
+
+
+    /**
+     * Register the Avored Console Admin Make .
+     *
+     * @return void
+     */
+    protected function registerAdminMakeCommand()
+    {
+        $this->app->singleton('avored:admin:make', function ($app) {
+            return new AdminMakeCommand($app['files']);
+        });
+
+        $this->commands('avored:admin:make');
     }
 
     /**
@@ -755,6 +772,17 @@ class Provider extends ServiceProvider
 
         $this->app['config']->set('auth', array_merge_recursive(require __DIR__.'/../config/avored-auth.php', $authConfig));
         $this->mergeConfigFrom(__DIR__.'/../config/avored-ecommerce.php', 'avored-ecommerce');
+    }
+
+
+    /**
+     * Get the services provided by the provider.
+     *
+     * @return array
+     */
+    public function provides()
+    {
+        return ['avored:admin:make'];
     }
 
     /**
