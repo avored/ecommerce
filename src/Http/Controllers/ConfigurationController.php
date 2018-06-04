@@ -41,7 +41,7 @@ class ConfigurationController extends Controller
             }
 
             if (null === $configModel) {
-                dd($configModel);
+             
                 $data['configuration_key'] = $key;
                 $data['configuration_value'] = $value;
 
