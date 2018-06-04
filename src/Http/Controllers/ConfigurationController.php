@@ -11,9 +11,9 @@ use AvoRed\Framework\Models\Contracts\ConfigurationInterface;
 class ConfigurationController extends Controller
 {
     /**
-*
-    * @var \AvoRed\Framework\Models\Repository\ConfigurationRepository
-    */
+     *
+     * @var \AvoRed\Framework\Models\Repository\ConfigurationRepository
+     */
     protected $repository;
 
     public function __construct(ConfigurationInterface $repository)
