@@ -23,10 +23,9 @@
     </script>
 </head>
 <body>
-<div id="reset-password-page" class="container-fluid">
-<div class="row justify-content-center align-items-center" style="height: 100vh;" >
-        <div class="col-6">
-            <div class="offset-1 col-md-10">
+<div class="container-fluid">
+    <div class="row justify-content-center align-items-center" style="height: 100vh;">
+        <div class="col-8" style="max-width: 650px">
             <div class="card">
                 <div class="card-header">Reset Password</div>
                 <div class="card-body">
@@ -38,12 +37,14 @@
                     <div class="col-12">
 
                         <form class="form-horizontal" role="form" method="POST"
-                              action="{{ route('admin.password.reset.token') }}">
-                            @csrf
+                              action="{{ url('/admin/password/email') }}">
+                            {{ csrf_field() }}
 
                             <div class="form-group{{ $errors->has('email') ? ' has-error' : '' }}">
                                 <label for="email" >E-Mail Address</label>
-                                    <input v-model="email" id="email" type="email" class="form-control" name="email"
+
+
+                                    <input id="email" type="email" class="form-control" name="email"
                                            value="{{ old('email') }}" required>
 
                                     @if ($errors->has('email'))
@@ -56,7 +57,7 @@
 
                             <div class="form-group">
 
-                                <button type="submit" :disabled="isLoginDisbled" class="btn btn-primary">
+                                <button type="submit" class="btn btn-primary">
                                     Send Password Reset Link
                                 </button>
 
@@ -67,34 +68,11 @@
             </div>
         </div>
     </div>
-    <div class="col-6" style="border-left:1px solid;height:100vh;background-color:brown">
-        
-    </div>
 </div>
 
 </div>
 <!-- Scripts -->
 <!-- JQuery -->
 <script type="text/javascript" src="{{ asset('vendor/avored-admin/js/app.js') }}"></script>
-<script>
-    var app = new Vue({
-        el: '#reset-password-page',
-        data : {
-            email: ''
-        },
-        computed: {
-            isLoginDisbled: function() {
-
-                if(this.email != "") {
-                    return false;
-                }
-
-                return true;
-
-            }
-        }
-    });
-</script>
-
 </body>
 </html>

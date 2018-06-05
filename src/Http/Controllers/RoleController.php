@@ -7,21 +7,10 @@ use AvoRed\Ecommerce\Models\Database\Role as Model;
 use AvoRed\Ecommerce\Http\Requests\RoleRequst;
 use AvoRed\Ecommerce\Models\Database\Permission;
 use AvoRed\Framework\DataGrid\Facade as DataGrid;
-use AvoRed\Ecommerce\Models\Contracts\RoleInterface;
 
 class RoleController extends Controller
 {
-    /**
-     *
-     * @var \AvoRed\Ecommerce\Models\Repository\RoleRepository
-     */
-    protected $repository;
-
-    public function __construct(RoleInterface $repository)
-    {
-        $this->repository = $repository;
-    }
-
+  
     /**
      * Display a listing of the resource.
      *
@@ -29,7 +18,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        $roleGrid = new Role($this->repository->query());
+        $roleGrid = new Role(Model::query());
 
         return view('avored-ecommerce::role.index')->with('dataGrid', $roleGrid->dataGrid);
     }
@@ -54,7 +43,7 @@ class RoleController extends Controller
     public function store(RoleRequst $request)
     {
         try {
-            $role = $this->repository->create($request->all());
+            $role = Model::create($request->all());
             $this->_saveRolePermissions($request, $role);
         } catch (\Exception $e) {
             echo 'Caught exception: ', $e->getMessage(), "\n";
@@ -122,7 +111,9 @@ class RoleController extends Controller
         $permissionIds = [];
 
         if (count($request->get('permissions')) > 0) {
+          
             foreach ($request->get('permissions') as $key => $value) {
+              
                 if ($value != 1) {
                     continue;
                 }

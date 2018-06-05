@@ -7,6 +7,7 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Password;
 use Illuminate\Foundation\Auth\ResetsPasswords;
 
+
 class ResetPasswordController extends Controller
 {
     /*
@@ -61,8 +62,7 @@ class ResetPasswordController extends Controller
     public function showResetForm(Request $request, $token = null)
     {
         return view('avored-ecommerce::auth.passwords.reset')
-                            ->with(
-                                ['token' => $token, 'email' => $request->email]
+            ->with(['token' => $token, 'email' => $request->email]
             );
     }
 }
