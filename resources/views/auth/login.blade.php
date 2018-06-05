@@ -43,7 +43,7 @@
                                 {{ __('avored-ecommerce::lang.admin-email-label') }}
                             </label>
                             
-                            <input id="email" name="email" type="email" v-model='email' class="form-control" />
+                            <input id="email" :autofocus="autofocus" name="email" type="email" v-model='email' class="form-control" />
                         </div>
                         <div class="form-group">
                             <label>Password</label>
@@ -78,7 +78,8 @@
         el: '#login-page',
         data : {
             email: '',
-            password: ''
+            password: '',
+            autofocus:true
         },
         computed: {
             isLoginDisbled: function() {
