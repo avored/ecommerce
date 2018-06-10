@@ -1,13 +1,14 @@
 <template>
     <div class="form-group">
         <label :id=fieldName>{{ label }}</label>
-        <input :type="fieldType" 
-              :id=fieldName  
-              :name=fieldName 
-              @input="onChange"
-              v-model="value"
-              :class=computedClass />
-        <div   v-if=dataDisplayError   class="invalid-feedback">
+        <textarea 
+                :id=fieldName  
+                :name=fieldName 
+                @input="onChange"
+                :class=computedClass
+                v-model="textFieldValue"
+               ></textarea>
+        <div   v-show=dataDisplayError   class="invalid-feedback">
             {{ errorText }}
         </div>
     </div>
@@ -16,7 +17,6 @@
 <script>
     export default {
         props: {
-            fieldType: { type:String, default: 'text'},
             label: { type:String, required: true},
             fieldName: { type:String, required: true},
             fieldClass: { type:String, default: 'form-control'},
@@ -30,17 +30,21 @@
                 }
                 
                 return this.fieldClass + " is-invalid";
+            },
+            options: function() {
+                return JSON.parse(this.fieldOptions);
             }
         },
         data: function () {
             return {
-                value: this.fieldValue,
+                
                 dataDisplayError : function() {   
                     if(this.errorText == ""){
                         return false;
                     } 
                     return true;    
-                }
+                },
+                textFieldValue: this.fieldValue,
             }
         },
         methods:{
@@ -51,8 +55,9 @@
                     this.dataDisplayError = false
                 }
 
-                this.value = event.target.value;
+                this.textFieldValue = event.target.value;
             }
+           
         }
     }
 </script>

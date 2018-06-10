@@ -1,13 +1,21 @@
 <template>
     <div class="form-group">
         <label :id=fieldName>{{ label }}</label>
-        <input :type="fieldType" 
+        <select 
               :id=fieldName  
               :name=fieldName 
               @input="onChange"
-              v-model="value"
-              :class=computedClass />
-        <div   v-if=dataDisplayError   class="invalid-feedback">
+              :class=computedClass
+                v-model="selectedValue"
+               >
+
+              <option v-for="option in options"   :key="option.id" :value="option.id">
+                  {{ option.name }}
+
+                </option>
+
+        </select>
+        <div   v-show=dataDisplayError   class="invalid-feedback">
             {{ errorText }}
         </div>
     </div>
@@ -16,7 +24,7 @@
 <script>
     export default {
         props: {
-            fieldType: { type:String, default: 'text'},
+            fieldOptions: { type:String, default: '' },
             label: { type:String, required: true},
             fieldName: { type:String, required: true},
             fieldClass: { type:String, default: 'form-control'},
@@ -30,16 +38,21 @@
                 }
                 
                 return this.fieldClass + " is-invalid";
+            },
+            options: function() {
+                return JSON.parse(this.fieldOptions);
             }
         },
         data: function () {
             return {
-                value: this.fieldValue,
                 dataDisplayError : function() {   
                     if(this.errorText == ""){
                         return false;
                     } 
                     return true;    
+                },
+                selectedValue: function() {
+                    return this.fieldValue;
                 }
             }
         },
@@ -51,7 +64,11 @@
                     this.dataDisplayError = false
                 }
 
-                this.value = event.target.value;
+                this.selectValue = event.target.value;
+            },
+            isSelected: function(option) {
+            
+                return (option.id == this.fieldValue);
             }
         }
     }
