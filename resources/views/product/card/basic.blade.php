@@ -1,8 +1,6 @@
 <div class="row">
     <div class="col-6">
         @include('avored-ecommerce::forms.text',['name' => 'name','label' => 'Name'])
-       
-
     </div>
     <div class="col-6">
         @if(!isset($productCategories))
