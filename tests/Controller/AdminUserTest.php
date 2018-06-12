@@ -50,5 +50,8 @@ class AdminUserTest extends BaseTestCase
                         );
 
         $response->assertRedirect(route('admin.admin-user.index'));
+
+        $this->delete(route('admin.admin-user.destroy', $adminTestUser->id));
+        $response->assertRedirect(route('admin.admin-user.index'));
     }
 }
