@@ -17,6 +17,7 @@ use AvoRed\Ecommerce\Http\Middleware\AdminAuth;
 use AvoRed\Ecommerce\Http\Middleware\Permission;
 use AvoRed\Ecommerce\Http\Middleware\AdminApiAuth;
 use AvoRed\Ecommerce\Http\Middleware\RedirectIfAdminAuth;
+use AvoRed\Ecommerce\Http\Middleware\SiteCurrencyMiddleware;
 
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\View;
@@ -36,6 +37,7 @@ use AvoRed\Ecommerce\Widget\TotalOrder\Widget as TotalOrderWidget;
 
 //View Composers
 use AvoRed\Ecommerce\Http\ViewComposers\ProductFieldsComposer;
+use AvoRed\Ecommerce\Http\ViewComposers\SiteCurrencyFieldsComposer;
 use AvoRed\Ecommerce\Http\ViewComposers\CategoryFieldsComposer;
 use AvoRed\Ecommerce\Http\ViewComposers\AdminNavComposer;
 
@@ -48,12 +50,15 @@ use AvoRed\Ecommerce\Models\Contracts\AdminUserInterface;
 use AvoRed\Ecommerce\Models\Contracts\MenuInterface;
 use AvoRed\Ecommerce\Models\Contracts\PageInterface;
 use AvoRed\Ecommerce\Models\Contracts\RoleInterface;
+use AvoRed\Ecommerce\Models\Contracts\SiteCurrencyInterface;
 
 //Repositories
 use AvoRed\Ecommerce\Models\Repository\AdminUserRepository;
 use AvoRed\Ecommerce\Models\Repository\MenuRepository;
 use AvoRed\Ecommerce\Models\Repository\PageRepository;
 use AvoRed\Ecommerce\Models\Repository\RoleRepository;
+use AvoRed\Ecommerce\Models\Repository\SiteCurrencyRepository;
+use AvoRed\Ecommerce\Models\Database\SiteCurrency;
 
 class Provider extends ServiceProvider
 {
@@ -129,6 +134,7 @@ class Provider extends ServiceProvider
     {
         $router = $this->app['router'];
 
+        $router->aliasMiddleware('currency', SiteCurrencyMiddleware::class);
         $router->aliasMiddleware('admin.api.auth', AdminApiAuth::class);
         $router->aliasMiddleware('admin.auth', AdminAuth::class);
         $router->aliasMiddleware('admin.guest', RedirectIfAdminAuth::class);
@@ -143,6 +149,7 @@ class Provider extends ServiceProvider
     public function registerViewComposerData()
     {
         View::composer('avored-ecommerce::layouts.left-nav', AdminNavComposer::class);
+        View::composer('avored-ecommerce::site-currency._fields', SiteCurrencyFieldsComposer::class);
         View::composer(['avored-ecommerce::category._fields'], CategoryFieldsComposer::class);
         View::composer(['avored-ecommerce::admin-user._fields'], AdminUserFieldsComposer::class);
         View::composer(['avored-ecommerce::product.create',
@@ -255,6 +262,12 @@ class Provider extends ServiceProvider
         $systemMenu->subMenu('configuration', $configurationMenu);
 
 
+        $currencySetup = new AdminMenu();
+        $currencySetup->key('site_currency_setup')
+            ->label('Currency Setup')
+            ->route('admin.site-currency.index')
+            ->icon('fas fa-dollar-sign');
+        $systemMenu->subMenu('site_currency', $currencySetup);
 
 
 
@@ -300,6 +313,17 @@ class Provider extends ServiceProvider
             ->label('Default Site Description')
             ->type('text')
             ->name('general_site_description');
+
+
+        $configurationGroup->addConfiguration('general_site_currency')
+            ->label('Default Site Currency')
+            ->type('select')
+            ->name('general_site_currency')
+            ->options(function () {
+                $options = SiteCurrency::all()->pluck('name', 'id');
+                return $options;
+            });
+
 
         $configurationGroup->addConfiguration('general_administrator_email')
             ->label('Administrator Email')
@@ -838,5 +862,6 @@ class Provider extends ServiceProvider
         $this->app->bind(MenuInterface::class,MenuRepository::class);
         $this->app->bind(PageInterface::class,PageRepository::class);
         $this->app->bind(RoleInterface::class,RoleRepository::class);
+        $this->app->bind(SiteCurrencyInterface::class,SiteCurrencyRepository::class);
     }
 }
