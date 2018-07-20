@@ -302,7 +302,7 @@ class Provider extends ServiceProvider
         $configurationGroup->addConfiguration('general_site_title')
             ->label('Default Site Title')
             ->type('text')
-            ->name('default_site_title');
+            ->name('general_site_title');
 
         $configurationGroup->addConfiguration('general_site_description')
             ->label('Default Site Description')
@@ -357,15 +357,6 @@ class Provider extends ServiceProvider
             ->name('user_activation_required')
             ->options(function () {
                 $options = [0 => 'No', 1 => 'Yes'];
-                return $options;
-            });
-
-        $userGroup->addConfiguration('user_logout_keep_cart_products')
-            ->label('After User Logout Keep Cart Products?')
-            ->type('select')
-            ->name('user_logout_keep_cart_products')
-            ->options(function () {
-                $options = [1 => 'Yes', 0 => 'No'];
                 return $options;
             });
 
