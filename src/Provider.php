@@ -360,6 +360,15 @@ class Provider extends ServiceProvider
                 return $options;
             });
 
+        $userGroup->addConfiguration('user_logout_keep_cart_products')
+            ->label('After User Logout Keep Cart Products?')
+            ->type('select')
+            ->name('user_logout_keep_cart_products')
+            ->options(function () {
+                $options = [1 => 'Yes', 0 => 'No'];
+                return $options;
+            });
+
         $shippingGroup = AdminConfigurationFacade::add('shipping')
             ->label('Shipping');
 
